@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TaskController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,6 +19,12 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/tasks', [TaskController::class, 'index']);
+Route::get('/tasks/list', [TaskController::class, 'getTasks']);
+Route::post('/tasks', [TaskController::class, 'store']);
+Route::post('/tasks/update/{id}', [TaskController::class, 'update']);
+Route::delete('/tasks/{id}', [TaskController::class, 'destroy']);
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -28,4 +35,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
