@@ -132,7 +132,13 @@
 
                         $.post('/tasks', result.value, function() {
                             table.ajax.reload();
-                            Swal.fire('Success', 'Task created', 'success');
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: 'Task created',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
                         });
 
                     }
@@ -160,7 +166,12 @@
                             type: 'DELETE',
                             success: function() {
                                 table.row(row).remove().draw();
-                                Swal.fire('Deleted!', '', 'success');
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Deleted!',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                });
                             }
                         });
 
@@ -201,7 +212,12 @@
 
                         $.post(`/tasks/update/${data.id}`, result.value, function() {
                             table.ajax.reload();
-                            Swal.fire('Updated!', '', 'success');
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Updated!',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
                         });
 
                     }
