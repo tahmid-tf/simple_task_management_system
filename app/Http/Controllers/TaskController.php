@@ -13,15 +13,19 @@ class TaskController extends Controller
 
     public function getTasks()
     {
-        return response()->json([
-            'data' => Task::latest()->get(),
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                'data' => Task::latest()->get(),
+            ]);
+        } else {
+            return redirect()->route('tasks.index');
+        }
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'required',
+            'title'       => 'required',
             'description' => 'required',
         ]);
 

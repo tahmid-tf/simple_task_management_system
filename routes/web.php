@@ -16,10 +16,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('tasks.index');
 });
 
-Route::get('/tasks', [TaskController::class, 'index']);
+Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
 Route::get('/tasks/list', [TaskController::class, 'getTasks']);
 Route::post('/tasks', [TaskController::class, 'store']);
 Route::post('/tasks/update/{id}', [TaskController::class, 'update']);
