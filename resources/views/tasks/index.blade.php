@@ -120,9 +120,15 @@
                     confirmButtonText: 'Save',
                     showCancelButton: true,
                     preConfirm: () => {
+                        const title = $('#title').val();
+                        const description = $('#description').val();
+                        if (!title || !description) {
+                            Swal.showValidationMessage('Please fill out both title and description');
+                            return false;
+                        }
                         return {
-                            title: $('#title').val(),
-                            description: $('#description').val(),
+                            title: title,
+                            description: description,
                             status: $('#status').val()
                         };
                     }
@@ -200,9 +206,15 @@
                     confirmButtonText: 'Update',
                     showCancelButton: true,
                     preConfirm: () => {
+                        const title = $('#title').val();
+                        const description = $('#description').val();
+                        if (!title || !description) {
+                            Swal.showValidationMessage('Please fill out both title and description');
+                            return false;
+                        }
                         return {
-                            title: $('#title').val(),
-                            description: $('#description').val(),
+                            title: title,
+                            description: description,
                             status: $('#status').val()
                         };
                     }
