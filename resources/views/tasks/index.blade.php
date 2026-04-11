@@ -21,43 +21,7 @@
     <!-- SortableJS (Drag & Drop) -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 
-    <style>
-        body {
-            background: #f5f7fb;
-        }
-
-        .page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 30px;
-        }
-
-        .kanban-column {
-            min-height: 400px;
-            background: #e9ecef;
-            padding: 15px;
-            border-radius: 10px;
-        }
-
-        .task-card-item {
-            background: #fff;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            cursor: grab;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .task-title {
-            font-weight: 600;
-        }
-
-        .task-desc {
-            font-size: 14px;
-            color: #6c757d;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('css/task.css') }}">
 </head>
 
 <body>
