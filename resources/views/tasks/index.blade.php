@@ -118,7 +118,7 @@
                     res.data.forEach(task => {
 
                         let card = `
-                    <div class="task-card-item" data-id="${task.id}">
+                    <div class="task-card-item" data-id="${task.id}" data-status="${task.status}">
                         <div class="task-title">${task.title}</div>
                         <div class="task-desc">${task.description ?? ''}</div>
 
@@ -165,6 +165,8 @@
 
                             $.post(`/tasks/update/${taskId}`, {
                                 status: newStatus
+                            }, function() {
+                                loadTasks();
                             });
 
                         }
@@ -263,16 +265,18 @@
 
                 let title = card.find('.task-title').text();
                 let description = card.find('.task-desc').text();
+                let currentStatus = card.data('status');
 
                 Swal.fire({
                     title: 'Edit Task',
                     html: `
                 <input id="title" class="swal2-input" value="${title}">
                 <textarea id="description" class="swal2-textarea">${description}</textarea>
+                
                 <select id="status" class="swal2-select">
-                    <option value="pending">Pending</option>
-                    <option value="in_progress">In Progress</option>
-                    <option value="completed">Completed</option>
+                    <option value="pending" ${currentStatus === 'pending' ? 'selected' : ''}>Pending</option>
+                    <option value="in_progress" ${currentStatus === 'in_progress' ? 'selected' : ''}>In Progress</option>
+                    <option value="completed" ${currentStatus === 'completed' ? 'selected' : ''}>Completed</option>
                 </select>
             `,
                     confirmButtonText: 'Update',
