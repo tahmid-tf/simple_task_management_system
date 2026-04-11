@@ -20,10 +20,10 @@ Route::get('/', function () {
 });
 
 Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
-Route::get('/tasks/list', [TaskController::class, 'getTasks']);
-Route::post('/tasks', [TaskController::class, 'store']);
-Route::post('/tasks/update/{id}', [TaskController::class, 'update']);
-Route::delete('/tasks/{id}', [TaskController::class, 'destroy']);
+Route::get('/tasks/list', [TaskController::class, 'getTasks'])->name('tasks.getTasks');
+Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
+Route::post('/tasks/update/{id}', [TaskController::class, 'update'])->name('tasks.update');
+Route::delete('/tasks/{id}', [TaskController::class, 'destroy'])->name('tasks.destroy');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
