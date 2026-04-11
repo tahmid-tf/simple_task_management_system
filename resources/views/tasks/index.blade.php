@@ -4,16 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Task Manager</title>
+    <title>Task Manager (Kanban)</title>
 
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Bootstrap Icons -->
+    <!-- Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
-    <!-- DataTables -->
-    <link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
 
     <!-- SweetAlert -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -21,130 +18,202 @@
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 
-    <!-- DataTables JS -->
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <link rel="stylesheet" href="{{ asset('css/task.css') }}">
+    <!-- SortableJS (Drag & Drop) -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 
+    <style>
+        body {
+            background: #f5f7fb;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+        }
+
+        .kanban-column {
+            min-height: 400px;
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .task-card-item {
+            background: #fff;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: grab;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .task-title {
+            font-weight: 600;
+        }
+
+        .task-desc {
+            font-size: 14px;
+            color: #6c757d;
+        }
+    </style>
 </head>
 
 <body>
 
-    <div class="container page-shell">
-        <div class="task-card">
-            <div class="page-header">
-                <div>
-                    <h2 class="page-title">Task Management</h2>
-                    <p class="page-subtitle">Organize, track, and update your work from one clean dashboard.</p>
-                </div>
+    <div class="container">
 
-                <button class="btn btn-primary add-task-btn" id="addTaskBtn">
-                    <i class="bi bi-plus-lg"></i> Add Task
-                </button>
+        <div class="page-header">
+            <div>
+                <h2>Task Management</h2>
+                <p>Drag & drop tasks between columns</p>
             </div>
 
-            <table class="table align-middle" id="taskTable">
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Description</th>
-                        <th>Status</th>
-                        <th width="140">Action</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+            <button class="btn btn-primary" id="addTaskBtn">
+                <i class="bi bi-plus-lg"></i> Add Task
+            </button>
         </div>
+
+        <div class="row mt-4">
+
+            <div class="col-md-4">
+                <h5 class="text-warning">Pending</h5>
+                <div class="kanban-column" data-status="pending" id="pendingTasks"></div>
+            </div>
+
+            <div class="col-md-4">
+                <h5 class="text-info">In Progress</h5>
+                <div class="kanban-column" data-status="in_progress" id="inProgressTasks"></div>
+            </div>
+
+            <div class="col-md-4">
+                <h5 class="text-success">Completed</h5>
+                <div class="kanban-column" data-status="completed" id="completedTasks"></div>
+            </div>
+
+        </div>
+
     </div>
 
     <script>
         $(document).ready(function() {
 
+            // CSRF
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 }
             });
 
-            let table = $('#taskTable').DataTable({
-                ajax: '/tasks/list',
-                columns: [{
-                        data: 'title'
-                    },
-                    {
-                        data: 'description'
-                    },
-                    {
-                        data: 'status',
-                        render: function(data) {
-                            let color = 'secondary';
-                            let label = data.replace('_', ' ');
+            // =========================
+            // LOAD TASKS
+            // =========================
+            function loadTasks() {
 
-                            if (data === 'pending') color = 'warning';
-                            if (data === 'in_progress') color = 'info';
-                            if (data === 'completed') color = 'success';
+                $('#pendingTasks, #inProgressTasks, #completedTasks').html('');
 
-                            return `<span class="badge bg-${color} status-badge">${label}</span>`;
+                $.get('/tasks/list', function(res) {
+
+                    res.data.forEach(task => {
+
+                        let card = `
+                    <div class="task-card-item" data-id="${task.id}">
+                        <div class="task-title">${task.title}</div>
+                        <div class="task-desc">${task.description ?? ''}</div>
+
+                        <div class="mt-2 d-flex gap-2">
+                            <button class="btn btn-sm btn-warning editBtn">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger deleteBtn">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                        if (task.status === 'pending') {
+                            $('#pendingTasks').append(card);
+                        } else if (task.status === 'in_progress') {
+                            $('#inProgressTasks').append(card);
+                        } else {
+                            $('#completedTasks').append(card);
                         }
-                    },
-                    {
-                        data: null,
-                        render: function() {
-                            return `
-                                <div class="action-group">
-                                    <button class="icon-action editBtn" type="button" title="Edit task" aria-label="Edit task">
-                                        <i class="bi bi-pencil-square"></i>
-                                    </button>
-                                    <button class="icon-action deleteBtn" type="button" title="Delete task" aria-label="Delete task">
-                                        <i class="bi bi-trash3"></i>
-                                    </button>
-                                </div>
-                            `;
-                        }
-                    }
-                ]
-            });
 
+                    });
+
+                });
+
+            }
+
+            // =========================
+            // DRAG & DROP
+            // =========================
+            function initDrag() {
+
+                document.querySelectorAll('.kanban-column').forEach(column => {
+
+                    new Sortable(column, {
+                        group: 'tasks',
+                        animation: 150,
+
+                        onEnd: function(evt) {
+
+                            let taskId = $(evt.item).data('id');
+                            let newStatus = $(evt.to).data('status');
+
+                            $.post(`/tasks/update/${taskId}`, {
+                                status: newStatus
+                            });
+
+                        }
+                    });
+
+                });
+
+            }
+
+            // =========================
+            // ADD TASK
+            // =========================
             $('#addTaskBtn').click(function() {
 
                 Swal.fire({
                     title: 'Add Task',
                     html: `
-                        <input id="title" class="swal2-input" placeholder="Title">
-                        <textarea id="description" class="swal2-textarea" placeholder="Description"></textarea>
-                        <select id="status" class="swal2-select">
-                            <option value="pending">Pending</option>
-                            <option value="in_progress">In Progress</option>
-                            <option value="completed">Completed</option>
-                        </select>
-                    `,
+                <input id="title" class="swal2-input" placeholder="Title">
+                <textarea id="description" class="swal2-textarea" placeholder="Description"></textarea>
+                <select id="status" class="swal2-select">
+                    <option value="pending">Pending</option>
+                    <option value="in_progress">In Progress</option>
+                    <option value="completed">Completed</option>
+                </select>
+            `,
                     confirmButtonText: 'Save',
                     showCancelButton: true,
                     preConfirm: () => {
                         const title = $('#title').val();
                         const description = $('#description').val();
+
                         if (!title || !description) {
-                            Swal.showValidationMessage('Please fill out both title and description');
+                            Swal.showValidationMessage('All fields required');
                             return false;
                         }
+
                         return {
                             title: title,
                             description: description,
                             status: $('#status').val()
                         };
                     }
-                }).then((result) => {
+                }).then(result => {
 
                     if (result.isConfirmed) {
 
                         $.post('/tasks', result.value, function() {
-                            table.ajax.reload();
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Success',
-                                text: 'Task created',
-                                showConfirmButton: false,
-                                timer: 1500
-                            });
+                            loadTasks();
+                            Swal.fire('Success', 'Task created', 'success');
                         });
 
                     }
@@ -153,31 +222,28 @@
 
             });
 
-            $('#taskTable').on('click', '.deleteBtn', function() {
+            // =========================
+            // DELETE
+            // =========================
+            $(document).on('click', '.deleteBtn', function() {
 
-                let row = $(this).closest('tr');
-                let data = table.row(row).data();
+                let card = $(this).closest('.task-card-item');
+                let id = card.data('id');
 
                 Swal.fire({
                     title: 'Delete?',
-                    text: 'This cannot be undone',
                     icon: 'warning',
                     showCancelButton: true
-                }).then((result) => {
+                }).then(result => {
 
                     if (result.isConfirmed) {
 
                         $.ajax({
-                            url: `/tasks/${data.id}`,
+                            url: `/tasks/${id}`,
                             type: 'DELETE',
                             success: function() {
-                                table.row(row).remove().draw();
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Deleted!',
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                });
+                                card.remove();
+                                Swal.fire('Deleted!', '', 'success');
                             }
                         });
 
@@ -187,49 +253,53 @@
 
             });
 
-            $('#taskTable').on('click', '.editBtn', function() {
+            // =========================
+            // EDIT
+            // =========================
+            $(document).on('click', '.editBtn', function() {
 
-                let row = $(this).closest('tr');
-                let data = table.row(row).data();
+                let card = $(this).closest('.task-card-item');
+                let id = card.data('id');
+
+                let title = card.find('.task-title').text();
+                let description = card.find('.task-desc').text();
 
                 Swal.fire({
                     title: 'Edit Task',
                     html: `
-                        <input id="title" class="swal2-input" value="${data.title}">
-                        <textarea id="description" class="swal2-textarea">${data.description ?? ''}</textarea>
-                        <select id="status" class="swal2-select">
-                            <option value="pending" ${data.status=='pending'?'selected':''}>Pending</option>
-                            <option value="in_progress" ${data.status=='in_progress'?'selected':''}>In Progress</option>
-                            <option value="completed" ${data.status=='completed'?'selected':''}>Completed</option>
-                        </select>
-                    `,
+                <input id="title" class="swal2-input" value="${title}">
+                <textarea id="description" class="swal2-textarea">${description}</textarea>
+                <select id="status" class="swal2-select">
+                    <option value="pending">Pending</option>
+                    <option value="in_progress">In Progress</option>
+                    <option value="completed">Completed</option>
+                </select>
+            `,
                     confirmButtonText: 'Update',
                     showCancelButton: true,
                     preConfirm: () => {
-                        const title = $('#title').val();
-                        const description = $('#description').val();
-                        if (!title || !description) {
-                            Swal.showValidationMessage('Please fill out both title and description');
+
+                        const t = $('#title').val();
+                        const d = $('#description').val();
+
+                        if (!t || !d) {
+                            Swal.showValidationMessage('All fields required');
                             return false;
                         }
+
                         return {
-                            title: title,
-                            description: description,
+                            title: t,
+                            description: d,
                             status: $('#status').val()
                         };
                     }
-                }).then((result) => {
+                }).then(result => {
 
                     if (result.isConfirmed) {
 
-                        $.post(`/tasks/update/${data.id}`, result.value, function() {
-                            table.ajax.reload();
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Updated!',
-                                showConfirmButton: false,
-                                timer: 1500
-                            });
+                        $.post(`/tasks/update/${id}`, result.value, function() {
+                            loadTasks();
+                            Swal.fire('Updated!', '', 'success');
                         });
 
                     }
@@ -237,6 +307,10 @@
                 });
 
             });
+
+            // INIT
+            loadTasks();
+            initDrag();
 
         });
     </script>
