@@ -1,66 +1,125 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Simple Task Management System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A sleek, efficient, and user-friendly Task Management System built with Laravel. This application features a dynamic Kanban board that allows users to organize their workflow through intuitive drag-and-drop actions.
 
-## About Laravel
+<img src="public/images/task_m.png">
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🚀 Features
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Interactive Task Management Board**: Visualize your workflow with Pending, In Progress, and Completed columns.
+- **Drag & Drop**: Effortlessly move tasks between stages using [SortableJS](https://sortablejs.github.io/Sortable/).
+- **Task CRUD**: Create, view, edit, and delete tasks with a seamless modal interface.
+- **Real-time Updates**: Status changes are persisted instantly via AJAX.
+- **Responsive Design**: Fully responsive UI built with Bootstrap 5.
+- **Modern Notifications**: Beautiful alerts and confirmations using SweetAlert2.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 🛠️ Tech Stack
 
-## Learning Laravel
+- **Backend**: [Laravel 10](https://laravel.com/) (PHP)
+- **Frontend**: Blade Templates, [Bootstrap 5](https://getbootstrap.com/), [jQuery](https://jquery.com/)
+- **Libraries**: [SortableJS](https://sortablejs.github.io/Sortable/), [SweetAlert2](https://sweetalert2.github.io/)
+- **Database**: MySQL / SQLite (Database-agnostic migrations)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 📋 Prerequisites
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+- PHP >= 8.1
+- Composer
+- Node.js & NPM
+- MySQL or SQLite
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## ⚙️ Local Installation
 
-## Laravel Sponsors
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/simple-task-management-system.git
+   cd simple-task-management-system
+   ```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+2. **Install dependencies**
+   ```bash
+   composer install
+   npm install
+   ```
 
-### Premium Partners
+3. **Environment Setup**
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
+   *Configure your database settings in the `.env` file.*
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+4. **Run Migrations**
+   ```bash
+   php artisan migrate
+   ```
 
-## Contributing
+5. **Compile Assets**
+   ```bash
+   npm run build
+   ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+6. **Start the Server**
+   ```bash
+   php artisan serve
+   ```
+   Visit `http://localhost:8000` in your browser.
 
-## Code of Conduct
+## ☁️ Deployment (AWS Bitnami LAMP)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+To deploy this application on an **AWS Bitnami LAMP** stack, follow these specific steps:
 
-## Security Vulnerabilities
+1. **Clone to the Projects Directory**
+   We recommend cloning outside the default `htdocs` for better security:
+   ```bash
+   cd /opt/bitnami/projects
+   sudo git clone https://github.com/yourusername/simple-task-management-system.git
+   cd simple-task-management-system
+   ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+2. **Environment & Dependency Setup**
+   Create your environment file and install dependencies:
+   ```bash
+   sudo cp .env.example .env
+   sudo composer install --no-dev
+   sudo php artisan key:generate
+   ```
+   *Note: Edit `.env` to configure your production database.*
 
-## License
+3. **Configure Permissions**
+   Laravel requires write access to specific directories. Bitnami uses the `daemon` user for Apache:
+   ```bash
+   sudo chown -R bitnami:daemon storage bootstrap/cache
+   sudo chmod -R 775 storage bootstrap/cache
+   sudo chown -R 755 storage
+   ```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+3. **Restart Apache**
+   ```bash
+   sudo /opt/bitnami/ctlscript.sh restart apache
+   ```
+
+4. **Environment Production Tweaks**
+   Ensure your `.env` has:
+   ```env
+   APP_ENV=production
+   APP_DEBUG=false
+   ```
+   Then run:
+   ```bash
+   php artisan config:cache
+   php artisan route:cache
+   php artisan view:cache
+   ```
+
+## 📖 Usage
+
+1. **Add Task**: Click the "Add Task" button to create a new task with a title and description.
+2. **Manage Status**: Drag task cards between columns to update their progress.
+3. **Edit/Delete**: Use the icons on each card to modify task details or remove them permanently.
+
+## 🧪 Running Tests
+
+The project includes feature and unit tests to ensure stability.
+```bash
+php artisan test
+```
