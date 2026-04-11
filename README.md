@@ -4,7 +4,7 @@ A sleek, efficient, and user-friendly Task Management System built with Laravel.
 
 <img src="public/images/task_m.png">
 
-## 🚀 Features
+## Features
 
 - **Interactive Task Management Board**: Visualize your workflow with Pending, In Progress, and Completed columns.
 - **Drag & Drop**: Effortlessly move tasks between stages using [SortableJS](https://sortablejs.github.io/Sortable/).
@@ -13,21 +13,21 @@ A sleek, efficient, and user-friendly Task Management System built with Laravel.
 - **Responsive Design**: Fully responsive UI built with Bootstrap 5.
 - **Modern Notifications**: Beautiful alerts and confirmations using SweetAlert2.
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Backend**: [Laravel 10](https://laravel.com/) (PHP)
 - **Frontend**: Blade Templates, [Bootstrap 5](https://getbootstrap.com/), [jQuery](https://jquery.com/)
 - **Libraries**: [SortableJS](https://sortablejs.github.io/Sortable/), [SweetAlert2](https://sweetalert2.github.io/)
-- **Database**: MySQL / SQLite (Database-agnostic migrations)
+- **Database**: MySQL / SQLite (database-agnostic migrations)
 
-## 📋 Prerequisites
+## Prerequisites
 
 - PHP >= 8.1
 - Composer
-- Node.js & NPM
+- Node.js and NPM
 - MySQL or SQLite
 
-## ⚙️ Local Installation
+## Local Installation
 
 1. **Clone the repository**
    ```bash
@@ -41,36 +41,36 @@ A sleek, efficient, and user-friendly Task Management System built with Laravel.
    npm install
    ```
 
-3. **Environment Setup**
+3. **Environment setup**
    ```bash
    cp .env.example .env
    php artisan key:generate
    ```
-   *Configure your database settings in the `.env` file.*
+   Configure your database settings in the `.env` file.
 
-4. **Run Migrations**
+4. **Run migrations**
    ```bash
    php artisan migrate
    ```
 
-5. **Compile Assets**
+5. **Compile assets**
    ```bash
    npm run build
    ```
 
-6. **Start the Server**
+6. **Start the server**
    ```bash
    php artisan serve
    ```
    Visit `http://localhost:8000` in your browser.
 
-## ☁️ Deployment (AWS Bitnami LAMP)
+## Deployment (AWS Bitnami LAMP)
 
 <img src="public/images/server.png">
 
 To deploy this application on an **AWS Bitnami LAMP** stack, follow these specific steps:
 
-1. **Clone to the Projects Directory**
+1. **Clone to the projects directory**
    We recommend cloning outside the default `htdocs` for better security:
    ```bash
    cd /opt/bitnami/projects
@@ -78,28 +78,28 @@ To deploy this application on an **AWS Bitnami LAMP** stack, follow these specif
    cd simple-task-management-system
    ```
 
-2. **Environment & Dependency Setup**
+2. **Environment and dependency setup**
    Create your environment file and install dependencies:
    ```bash
    sudo cp .env.example .env
    sudo composer install
    sudo php artisan key:generate
    ```
-   *Note: Edit `.env` to configure your production database.*
+   Edit `.env` to configure your production database.
 
-3. **Configure Permissions**
+3. **Configure permissions**
    Laravel requires write access to specific directories. Bitnami uses the `daemon` user for Apache:
    ```bash
    sudo chmod -R 777 storage bootstrap
    sudo chown -R 777 storage
    ```
 
-3. **Restart Apache**
+4. **Restart Apache**
    ```bash
    sudo /opt/bitnami/ctlscript.sh restart apache
    ```
 
-4. **Environment Production Tweaks**
+5. **Production environment tweaks**
    Ensure your `.env` has:
    ```env
    APP_ENV=production
@@ -112,15 +112,41 @@ To deploy this application on an **AWS Bitnami LAMP** stack, follow these specif
    php artisan view:cache
    ```
 
-## 📖 Usage
+## Usage
 
 1. **Add Task**: Click the "Add Task" button to create a new task with a title and description.
 2. **Manage Status**: Drag task cards between columns to update their progress.
 3. **Edit/Delete**: Use the icons on each card to modify task details or remove them permanently.
 
-## 🧪 Running Tests
+## Running Tests
 
-The project includes feature and unit tests to ensure stability.
+The project includes both `Feature` and `Unit` tests to help verify core behavior and reduce regressions as the app evolves.
+
+Run the full test suite with:
+
 ```bash
 php artisan test
 ```
+
+Run a specific suite when you only want part of the coverage:
+
+```bash
+php artisan test --testsuite=Feature
+php artisan test --testsuite=Unit
+```
+
+The current automated tests cover areas such as:
+
+- authentication flows
+- email verification and password reset/update
+- profile management
+- task controller behavior, including:
+  - redirecting the home route to the task board
+  - loading the task index page successfully
+  - returning task data as JSON for AJAX requests
+  - redirecting non-AJAX task fetch requests
+  - creating tasks and validating required fields
+  - updating task details and status
+  - deleting tasks successfully
+
+The test configuration is defined in `phpunit.xml`, which already includes separate `Feature` and `Unit` suites. If you want isolated database settings for automated tests, update the testing database configuration there before running the suite.
