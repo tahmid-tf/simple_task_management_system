@@ -13,13 +13,9 @@ class TaskController extends Controller
 
     public function getTasks()
     {
-        if (request()->ajax()) {
-            return response()->json([
-                'data' => Task::latest()->get(),
-            ]);
-        } else {
-            return redirect()->route('tasks.index');
-        }
+        return response()->json([
+            'data' => Task::latest()->get(),
+        ]);
     }
 
     public function store(Request $request)
