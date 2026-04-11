@@ -66,6 +66,8 @@ A sleek, efficient, and user-friendly Task Management System built with Laravel.
 
 ## ☁️ Deployment (AWS Bitnami LAMP)
 
+<img src="public/images/server.png">
+
 To deploy this application on an **AWS Bitnami LAMP** stack, follow these specific steps:
 
 1. **Clone to the Projects Directory**
@@ -80,7 +82,7 @@ To deploy this application on an **AWS Bitnami LAMP** stack, follow these specif
    Create your environment file and install dependencies:
    ```bash
    sudo cp .env.example .env
-   sudo composer install --no-dev
+   sudo composer install
    sudo php artisan key:generate
    ```
    *Note: Edit `.env` to configure your production database.*
@@ -88,9 +90,8 @@ To deploy this application on an **AWS Bitnami LAMP** stack, follow these specif
 3. **Configure Permissions**
    Laravel requires write access to specific directories. Bitnami uses the `daemon` user for Apache:
    ```bash
-   sudo chown -R bitnami:daemon storage bootstrap/cache
-   sudo chmod -R 775 storage bootstrap/cache
-   sudo chown -R 755 storage
+   sudo chmod -R 777 storage bootstrap
+   sudo chown -R 777 storage
    ```
 
 3. **Restart Apache**
