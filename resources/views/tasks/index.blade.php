@@ -62,6 +62,12 @@
 
     <script>
         $(document).ready(function() {
+            const taskUrls = {
+                list: @json(route('tasks.getTasks')),
+                store: @json(route('tasks.store')),
+                update: @json(route('tasks.update', ['id' => '__TASK_ID__'])),
+                destroy: @json(route('tasks.destroy', ['id' => '__TASK_ID__']))
+            };
 
             // CSRF
             $.ajaxSetup({
@@ -77,7 +83,7 @@
 
                 $('#pendingTasks, #inProgressTasks, #completedTasks').html('');
 
-                $.get('/tasks/list', function(res) {
+                $.get(taskUrls.list, function(res) {
 
                     res.data.forEach(task => {
 
@@ -127,7 +133,7 @@
                             let taskId = $(evt.item).data('id');
                             let newStatus = $(evt.to).data('status');
 
-                            $.post(`/tasks/update/${taskId}`, {
+                            $.post(taskUrls.update.replace('__TASK_ID__', taskId), {
                                 status: newStatus
                             }, function() {
                                 loadTasks();
@@ -177,7 +183,7 @@
 
                     if (result.isConfirmed) {
 
-                        $.post('/tasks', result.value, function() {
+                        $.post(taskUrls.store, result.value, function() {
                             loadTasks();
                             Swal.fire('Success', 'Task created', 'success');
                         });
@@ -205,7 +211,7 @@
                     if (result.isConfirmed) {
 
                         $.ajax({
-                            url: `/tasks/${id}`,
+                            url: taskUrls.destroy.replace('__TASK_ID__', id),
                             type: 'DELETE',
                             success: function() {
                                 card.remove();
@@ -265,7 +271,7 @@
 
                     if (result.isConfirmed) {
 
-                        $.post(`/tasks/update/${id}`, result.value, function() {
+                        $.post(taskUrls.update.replace('__TASK_ID__', id), result.value, function() {
                             loadTasks();
                             Swal.fire('Updated!', '', 'success');
                         });
